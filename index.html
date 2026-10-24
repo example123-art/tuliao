@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Tuliao P. Tuliao's IT Portfolio" />
+  <title>Tuliao P. Tuliao | IT Portfolio</title>
+
+  <style>
+    /* ================= SOLAR FLARE THEME ================= */
+    :root {
+      --bg: #0d0d0d; /* Deep Obsidian */
+      --surface: #1a1a1a; 
+      --text: #f5f5f5;
+      --muted: #a3a3a3;
+      --accent: #ff6b00; /* Solar Orange */
+      --accent-dim: rgba(255, 107, 0, 0.2);
+      --border: rgba(255, 107, 0, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Canvas for Shooting Stars Background */
+    #star-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1; pointer-events: none;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    
+    .wrap { width: min(1200px, calc(100% - 40px)); margin: auto; }
+    .wrap-narrow { width: min(1000px, calc(100% - 40px)); margin: auto; }
+
+    /* ================= SCROLL ANIMATIONS ================= */
+    .hidden-el { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .show-el { opacity: 1; transform: translateY(0); }
+
+    /* ================= HEADER ================= */
+    header {
+      position: fixed; width: 100%; top: 0; z-index: 10;
+      background: rgba(13, 13, 13, 0.85); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    nav { height: 75px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-weight: 900; font-size: 1.2rem; letter-spacing: 3px; color: #fff; }
+    .brand span { color: var(--accent); }
+    .navlinks { display: flex; gap: 30px; }
+    .navlinks a { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); transition: all 0.3s; }
+    .navlinks a:hover { color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+
+    /* ================= HERO ================= */
+    .hero { 
+      min-height: 100vh; display: flex; flex-direction: column; 
+      justify-content: center; align-items: center; text-align: center;
+      padding-top: 75px;
+    }
+    
+    .eyebrow { color: var(--accent); font-size: 0.85rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; }
+    h1 { font-size: clamp(3rem, 7vw, 6rem); line-height: 1; margin-bottom: 20px; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; color: #fff; }
+    .hero p { color: var(--muted); font-size: 1.2rem; max-width: 700px; margin-bottom: 40px; }
+    
+    .actions { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px;}
+    .btn { display: inline-block; padding: 16px 32px; border-radius: 50px; font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; transition: all 0.3s; border: 1px solid var(--border); }
+    .btn.primary { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
+    .btn.primary:hover { box-shadow: 0 0 40px var(--accent); transform: translateY(-3px); }
+    .btn.secondary { background: transparent; color: #fff; }
+    .btn.secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
+
+    /* ================= NEON RING PFP ================= */
+    .ring-container {
+      position: relative; width: 320px; height: 320px; margin: 0 auto;
+      display: flex; justify-content: center; align-items: center;
+    }
+    
+    /* Rotating outer rings */
+    .ring-1 {
+      position: absolute; width: 100%; height: 100%;
+      border-radius: 50%; border: 2px dashed var(--accent);
+      animation: spin 15s linear infinite;
+    }
+    .ring-2 {
+      position: absolute; width: 85%; height: 85%;
+      border-radius: 50%; border: 1px solid rgba(255, 107, 0, 0.5);
+      border-top: 4px solid var(--accent);
+      animation: spin-reverse 10s linear infinite;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
+
+    /* The actual photo */
+    .ring-photo {
+      position: relative; width: 240px; height: 240px;
+      border-radius: 50%; overflow: hidden; z-index: 2;
+      border: 4px solid var(--bg); box-shadow: 0 0 30px var(--accent-dim);
+    }
+    
+    .ring-photo img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .ring-photo:hover img { transform: scale(1.1); }
+
+    /* ================= TECH CARDS ================= */
+    section { padding: 100px 0; }
+    .section-head { margin-bottom: 50px; text-align: left; }
+    .section-head h2 { font-size: 2.5rem; color: #fff; text-transform: uppercase; font-weight: 900; }
+    .section-head p { color: var(--muted); margin-top: 10px; font-size: 1.1rem;}
+
+    .about-grid, .skills-grid, .project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+
+    /* New Card Hover Effect (Sliding border) */
+    .tech-card {
+      background: var(--surface); padding: 35px; border-radius: 8px;
+      position: relative; transition: all 0.3s; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    .tech-card::after {
+      content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 3px;
+      background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 0.4s ease;
+    }
+
+    .tech-card:hover::after { transform: scaleX(1); transform-origin: left; }
+    .tech-card:hover { background: #222; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    
+    .tech-card h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--accent); text-transform: uppercase;}
+    .tech-card p { color: var(--muted); font-size: 1.05rem;}
+    .tech-card ul { color: var(--muted); padding-left: 20px; margin-top: 10px; }
+    .tech-card li { margin-bottom: 8px; }
+    
+    .pillrow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .pill { background: rgba(255, 107, 0, 0.1); color: var(--accent); padding: 8px 16px; font-size: 0.8rem; font-weight: 700; border: 1px solid var(--border); border-radius: 4px; }
+
+    /* ================= CERTIFICATES (VERTICAL SCROLL) ================= */
+    .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
+    .cert-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; transition: all 0.3s;
+    }
+    .cert-card:hover { transform: scale(1.02); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
+    .cert-card h3 { font-size: 1rem; color: var(--accent); text-align: center; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
+    .cert-preview { width: 100%; height: 250px; object-fit: cover; object-position: top; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
+    
+    .cert-actions { display: flex; gap: 10px; margin-top: auto; }
+    .cert-actions a { flex: 1; text-align: center; font-size: 0.8rem; padding: 12px; font-weight: 800; text-transform: uppercase; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 4px; transition: all 0.3s; }
+    .cert-actions a:hover { background: var(--accent); color: #000; }
+    .cert-actions a.download { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+
+    /* ================= RESUME & CONTACT ================= */
+    .resume-band { background: linear-gradient(135deg, rgba(255,107,0,0.1), transparent); border: 1px solid var(--accent); border-radius: 8px; padding: 40px; display: flex; justify-content: space-between; align-items: center; gap: 30px; flex-wrap: wrap; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+    /* ================= RESPONSIVE ================= */
+    @media (max-width: 900px) {
+      .about-grid, .skills-grid, .project-grid, .cert-grid, .contact-grid { grid-template-columns: 1fr; }
+      .navlinks { display: none; }
+      .resume-band { flex-direction: column; text-align: center; }
+      .ring-container { width: 250px; height: 250px; }
+      .ring-photo { width: 180px; height: 180px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SHOOTING STARS CANVAS -->
+  <canvas id="star-canvas"></canvas>
+
+  <header>
+    <div class="wrap">
+      <nav>
+        <a class="brand" href="#home">TULIAO<span>.</span></a>
+        <div class="navlinks">
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+          <a href="#profdev">Certificates</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="wrap hero" id="home">
+      <div class="hidden-el">
+        <div class="eyebrow">Information Technology Student</div>
+        <h1>Tuliao P.<br>Tuliao</h1>
+        <p>I am an aspiring IT professional with a strong foundation in technical support and system troubleshooting, eager to apply my skills in a dynamic environment.</p>
+        <div class="actions">
+          <a class="btn primary" href="#projects">View Projects</a>
+          <a class="btn secondary" href="#resume">Download Resume</a>
+        </div>
+      </div>
+      
+      <div class="hidden-el">
+        <!-- NEON RING PFP -->
+        <div class="ring-container">
+          <div class="ring-1"></div>
+          <div class="ring-2"></div>
+          <div class="ring-photo">
+            <!-- ENSURE HIS PHOTO IS NAMED tuliao.jpg -->
+            <img src="tuliao.jpg" alt="Tuliao P. Tuliao" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="wrap-narrow">
+        <div class="section-head hidden-el">
+          <div class="eyebrow">About Me</div>
+          <h2>Reliable IT Solutions.</h2>
+        </div>
+        <div class="about-grid">
+          <article class="tech-card hidden-el">
+            <h3>My Background</h3>
+            <p>I possess basic knowledge of computer systems, software, programming, and problem-solving. I am able to work independently or as part of a team, with a willingness to learn new skills and gain practical experience.</p>
+          </article>
+          <article class="tech-card hidden-el">
+            <h3>Education</h3>
+            <p><strong>Northeastern College</strong><br>Bachelor of Science in Information Technology (2026 – Present)</p>
+            <div class="pillrow">
+              <span class="pill">Computer Applications</span>
+              <span class="pill">Information Management</span>
+              <span class="pill">Database Management</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="wrap-narrow">
+        <div class="section-head hidden-el">
+          <div class="eyebrow">Skills</div>
+          <h2>Tools and Strengths</h2>
+        </div>
+        <div class="skills-grid">
+          <article class="tech-card hidden-el">
+            <h3>Technical Skills</h3>
+            <ul>
+              <li>File & Document Management</li>
+              <li>Hardware Troubleshooting</li>
+              <li>Software Troubleshooting</li>
+              <li>Basic Programming</li>
+              <li>Email Communication</li>
+            </ul>
+          </article>
+          <article class="tech-card hidden-el">
+            <h3>Soft Skills</h3>
+            <ul>
+              <li>Respectful Communication</li>
+              <li>Teamwork</li>
+              <li>Time Management</li>
+              <li>Problem-Solving</li>
+              <li>Responsibility</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS (From Justine) -->
+    <section id="projects">
+      <div class="wrap-narrow">
+        <div class="section-head hidden-el">
+          <div class="eyebrow">Selected Work</div>
+          <h2>Projects</h2>
+        </div>
+        <div class="project-grid">
+          
+          <article class="tech-card hidden-el">
+            <h3>Barangay Villasis E-Barangay Services</h3>
+            <p>A web-based system for barangay services with an admin panel for staff and online services for residents.</p>
+            <div class="pillrow">
+              <span class="pill">PHP</span>
+              <span class="pill">MySQL</span>
+              <span class="pill">Web Development</span>
+            </div>
+          </article>
+
+          <article class="tech-card hidden-el">
+            <h3>IT Helpdesk Ticketing System</h3>
+            <p>A basic ticketing system concept that allows users to submit IT issues and allows administrators to track and resolve them efficiently.</p>
+            <div class="pillrow"><span class="pill">Java</span><span class="pill">MySQL</span><span class="pill">UI Design</span></div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATES (VERTICAL GRID) -->
+    <section id="profdev">
+      <div class="wrap-narrow">
+        <div class="section-head hidden-el">
+          <div class="eyebrow">Professional Development</div>
+          <h2>Certificates</h2>
+        </div>
+
+        <div class="cert-grid">
+          
+          <article class="cert-card hidden-el">
+            <h3>Certificate Title 1</h3>
+            <a href="cert1.jpg" target="_blank"><img class="cert-preview" src="cert1.jpg" alt="Certificate 1" /></a>
+            <div class="cert-actions"><a href="cert1.jpg" target="_blank">View</a><a href="cert1.jpg" download="Certificate-1.jpg" class="download">Save</a></div>
+          </article>
+
+          <article class="cert-card hidden-el">
+            <h3>Certificate Title 2</h3>
+            <a href="cert2.jpg" target="_blank"><img class="cert-preview" src="cert2.jpg" alt="Certificate 2" /></a>
+            <div class="cert-actions"><a href="cert2.jpg" target="_blank">View</a><a href="cert2.jpg" download="Certificate-2.jpg" class="download">Save</a></div>
+          </article>
+
+          <article class="cert-card hidden-el">
+            <h3>Certificate Title 3</h3>
+            <a href="cert3.jpg" target="_blank"><img class="cert-preview" src="cert3.jpg" alt="Certificate 3" /></a>
+            <div class="cert-actions"><a href="cert3.jpg" target="_blank">View</a><a href="cert3.jpg" download="Certificate-3.jpg" class="download">Save</a></div>
+          </article>
+
+          <article class="cert-card hidden-el">
+            <h3>Certificate Title 4</h3>
+            <a href="cert4.jpg" target="_blank"><img class="cert-preview" src="cert4.jpg" alt="Certificate 4" /></a>
+            <div class="cert-actions"><a href="cert4.jpg" target="_blank">View</a><a href="cert4.jpg" download="Certificate-4.jpg" class="download">Save</a></div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- RESUME DOWNLOAD -->
+    <section id="resume">
+      <div class="wrap-narrow">
+        <div class="resume-band hidden-el">
+          <div>
+            <h2>Download my resume</h2>
+            <p>My resume is available for viewing and download.</p>
+          </div>
+          <a class="btn primary" href="resume.pdf" download="Tuliao-Resume.pdf">Download Resume</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="wrap-narrow">
+        <div class="section-head hidden-el">
+          <div class="eyebrow">Contact</div>
+          <h2>Let's connect.</h2>
+        </div>
+        <div class="contact-grid">
+          <article class="tech-card hidden-el">
+            <h3>Contact Information</h3>
+            <p>Email: <a href="mailto:darreltuliao05@gmail.com" style="color:var(--accent); font-weight: bold;">darreltuliao05@gmail.com</a></p>
+            <p style="margin-top: 10px;">Phone: <a href="tel:+639971278025" style="color:var(--accent); font-weight: bold;">0997 127 8025</a></p>
+            <p style="margin-top: 10px;">Address: Santiago City, Isabela</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer style="text-align:center; padding: 40px 0; border-top: 1px solid var(--border); color: var(--muted);">
+    <div class="wrap">
+      <p>© 2026 Tuliao P. Tuliao. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // 1. Scroll Reveal Animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { entry.target.classList.add('show-el'); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.hidden-el').forEach((el) => observer.observe(el));
+
+    // 2. Shooting Stars Background Effect
+    const canvas = document.getElementById('star-canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let stars = [];
+
+    class Star {
+      constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height; // Start somewhere on screen initially
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = -50; // Start above screen
+        this.size = Math.random() * 2 + 1;
+        this.speed = Math.random() * 3 + 1;
+        this.opacity = Math.random() * 0.5 + 0.3;
+        this.color = Math.random() > 0.8 ? '#ff6b00' : '#ffffff'; // Some orange, mostly white
+      }
+      update() {
+        this.y += this.speed;
+        if (this.y > canvas.height) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function initStars() {
+      stars = [];
+      let numberOfStars = (canvas.width * canvas.height) / 8000; // Density
+      for (let i = 0; i < numberOfStars; i++) {
+        stars.push(new Star());
+      }
+    }
+
+    function animateStars() {
+      requestAnimationFrame(animateStars);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+    }
+
+    initStars();
+    animateStars();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initStars();
+    });
+  </script>
+
+</body>
+</html>
