@@ -116,7 +116,7 @@
 
     .about-grid, .skills-grid, .project-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
 
-    /* New Card Hover Effect (Sliding border) */
+    /* Card Hover Effect (Sliding border) */
     .tech-card {
       background: var(--surface); padding: 35px; border-radius: 8px;
       position: relative; transition: all 0.3s; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);
@@ -138,17 +138,47 @@
     .pillrow { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
     .pill { background: rgba(255, 107, 0, 0.1); color: var(--accent); padding: 8px 16px; font-size: 0.8rem; font-weight: 700; border: 1px solid var(--border); border-radius: 4px; }
 
-    /* ================= CERTIFICATES (VERTICAL SCROLL) ================= */
-    .cert-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-    .cert-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 15px; transition: all 0.3s;
+    /* ================= HORIZONTAL SLIDER CERTIFICATES ================= */
+    .cert-section { position: relative; overflow: hidden; padding-bottom: 50px; }
+    
+    /* Header Flex layout to hold title and buttons */
+    .cert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
     }
-    .cert-card:hover { transform: scale(1.02); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-dim); }
-    .cert-card h3 { font-size: 1rem; color: var(--accent); text-align: center; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
-    .cert-preview { width: 100%; height: 250px; object-fit: cover; object-position: top; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
+    .cert-header .section-head { margin-bottom: 0; }
+    
+    /* Grouped Buttons on the right */
+    .slider-buttons { display: flex; gap: 10px; }
+    .slider-btn {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border); 
+      color: var(--accent); font-size: 1.2rem; cursor: pointer;
+      display: grid; place-items: center; transition: all 0.3s;
+    }
+    .slider-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent-dim); }
+
+    .cert-track {
+      display: flex; gap: 30px; overflow-x: auto; scroll-snap-type: x mandatory;
+      scroll-behavior: smooth; padding: 10px 0; -ms-overflow-style: none; scrollbar-width: none;
+    }
+    .cert-track::-webkit-scrollbar { display: none; }
+
+    .cert-card {
+      flex: 0 0 320px; scroll-snap-align: start; background: var(--surface); 
+      border: 1px solid var(--border); border-radius: 8px; padding: 15px;
+      display: flex; flex-direction: column; gap: 15px; transition: all 0.3s;
+    }
+    .cert-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+    .cert-card h3 { font-size: 0.9rem; color: var(--accent); text-align: center; letter-spacing: 1px; text-transform: uppercase; font-weight: 800; }
+    .cert-preview { width: 100%; height: 200px; object-fit: cover; object-position: top; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
     
     .cert-actions { display: flex; gap: 10px; margin-top: auto; }
-    .cert-actions a { flex: 1; text-align: center; font-size: 0.8rem; padding: 12px; font-weight: 800; text-transform: uppercase; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 4px; transition: all 0.3s; }
+    .cert-actions a { flex: 1; text-align: center; font-size: 0.8rem; padding: 10px; font-weight: 800; text-transform: uppercase; background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 4px; transition: all 0.3s; }
     .cert-actions a:hover { background: var(--accent); color: #000; }
     .cert-actions a.download { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
 
@@ -158,11 +188,12 @@
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 900px) {
-      .about-grid, .skills-grid, .project-grid, .cert-grid, .contact-grid { grid-template-columns: 1fr; }
+      .about-grid, .skills-grid, .project-grid, .contact-grid { grid-template-columns: 1fr; }
       .navlinks { display: none; }
       .resume-band { flex-direction: column; text-align: center; }
       .ring-container { width: 250px; height: 250px; }
       .ring-photo { width: 180px; height: 180px; }
+      .cert-track { padding-bottom: 20px; }
     }
   </style>
 </head>
@@ -207,8 +238,8 @@
           <div class="ring-1"></div>
           <div class="ring-2"></div>
           <div class="ring-photo">
-            <!-- ENSURE HIS PHOTO IS NAMED tuliao.jpg -->
-            <img src="tuliao.jpg" alt="Tuliao P. Tuliao" />
+            <!-- EXACT FILENAME FROM SCREENSHOT -->
+            <img src="pfp.png" alt="Tuliao P. Tuliao" />
           </div>
         </div>
       </div>
@@ -271,7 +302,7 @@
       </div>
     </section>
 
-    <!-- PROJECTS (From Justine) -->
+    <!-- PROJECTS -->
     <section id="projects">
       <div class="wrap-narrow">
         <div class="section-head hidden-el">
@@ -300,38 +331,116 @@
       </div>
     </section>
 
-    <!-- CERTIFICATES (VERTICAL GRID) -->
-    <section id="profdev">
-      <div class="wrap-narrow">
-        <div class="section-head hidden-el">
-          <div class="eyebrow">Professional Development</div>
-          <h2>Certificates</h2>
+    <!-- HORIZONTAL CERTIFICATES SLIDER -->
+    <section id="profdev" class="cert-section">
+      <div class="wrap">
+        
+        <!-- Header with buttons on the right -->
+        <div class="cert-header hidden-el">
+          <div class="section-head">
+            <div class="eyebrow">Professional Development</div>
+            <h2>Certificates</h2>
+          </div>
+          <div class="slider-buttons">
+            <button class="slider-btn" id="cert-left">&#10094;</button>
+            <button class="slider-btn" id="cert-right">&#10095;</button>
+          </div>
         </div>
 
-        <div class="cert-grid">
+        <!-- The scrolling track -->
+        <div class="cert-track" id="cert-track">
           
-          <article class="cert-card hidden-el">
-            <h3>Certificate Title 1</h3>
-            <a href="cert1.jpg" target="_blank"><img class="cert-preview" src="cert1.jpg" alt="Certificate 1" /></a>
-            <div class="cert-actions"><a href="cert1.jpg" target="_blank">View</a><a href="cert1.jpg" download="Certificate-1.jpg" class="download">Save</a></div>
+          <!-- TESDA (5) -->
+          <article class="cert-card">
+            <h3>TESDA</h3>
+            <a href="1.jpg" target="_blank"><img class="cert-preview" src="1.jpg" alt="TESDA 1" /></a>
+            <div class="cert-actions"><a href="1.jpg" target="_blank">View</a><a href="1.jpg" download="TESDA-1.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>TESDA</h3>
+            <a href="2.jpg" target="_blank"><img class="cert-preview" src="2.jpg" alt="TESDA 2" /></a>
+            <div class="cert-actions"><a href="2.jpg" target="_blank">View</a><a href="2.jpg" download="TESDA-2.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>TESDA</h3>
+            <a href="3.jpg" target="_blank"><img class="cert-preview" src="3.jpg" alt="TESDA 3" /></a>
+            <div class="cert-actions"><a href="3.jpg" target="_blank">View</a><a href="3.jpg" download="TESDA-3.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>TESDA</h3>
+            <a href="4.jpg" target="_blank"><img class="cert-preview" src="4.jpg" alt="TESDA 4" /></a>
+            <div class="cert-actions"><a href="4.jpg" target="_blank">View</a><a href="4.jpg" download="TESDA-4.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>TESDA</h3>
+            <a href="5.jpg" target="_blank"><img class="cert-preview" src="5.jpg" alt="TESDA 5" /></a>
+            <div class="cert-actions"><a href="5.jpg" target="_blank">View</a><a href="5.jpg" download="TESDA-5.jpg" class="download">Save</a></div>
           </article>
 
-          <article class="cert-card hidden-el">
-            <h3>Certificate Title 2</h3>
-            <a href="cert2.jpg" target="_blank"><img class="cert-preview" src="cert2.jpg" alt="Certificate 2" /></a>
-            <div class="cert-actions"><a href="cert2.jpg" target="_blank">View</a><a href="cert2.jpg" download="Certificate-2.jpg" class="download">Save</a></div>
+          <!-- DICT (4) -->
+          <article class="cert-card">
+            <h3>DICT</h3>
+            <a href="dict1.jpg" target="_blank"><img class="cert-preview" src="dict1.jpg" alt="DICT 1" /></a>
+            <div class="cert-actions"><a href="dict1.jpg" target="_blank">View</a><a href="dict1.jpg" download="DICT-1.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>DICT</h3>
+            <a href="dict2.jpg" target="_blank"><img class="cert-preview" src="dict2.jpg" alt="DICT 2" /></a>
+            <div class="cert-actions"><a href="dict2.jpg" target="_blank">View</a><a href="dict2.jpg" download="DICT-2.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>DICT</h3>
+            <a href="dict3.jpg" target="_blank"><img class="cert-preview" src="dict3.jpg" alt="DICT 3" /></a>
+            <div class="cert-actions"><a href="dict3.jpg" target="_blank">View</a><a href="dict3.jpg" download="DICT-3.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>DICT</h3>
+            <a href="dict4.png" target="_blank"><img class="cert-preview" src="dict4.png" alt="DICT 4" /></a>
+            <div class="cert-actions"><a href="dict4.png" target="_blank">View</a><a href="dict4.png" download="DICT-4.png" class="download">Save</a></div>
           </article>
 
-          <article class="cert-card hidden-el">
-            <h3>Certificate Title 3</h3>
-            <a href="cert3.jpg" target="_blank"><img class="cert-preview" src="cert3.jpg" alt="Certificate 3" /></a>
-            <div class="cert-actions"><a href="cert3.jpg" target="_blank">View</a><a href="cert3.jpg" download="Certificate-3.jpg" class="download">Save</a></div>
+          <!-- MICROSOFT (4) -->
+          <article class="cert-card">
+            <h3>Microsoft</h3>
+            <a href="m1.jpg" target="_blank"><img class="cert-preview" src="m1.jpg" alt="Microsoft 1" /></a>
+            <div class="cert-actions"><a href="m1.jpg" target="_blank">View</a><a href="m1.jpg" download="Microsoft-1.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Microsoft</h3>
+            <a href="m2.jpg" target="_blank"><img class="cert-preview" src="m2.jpg" alt="Microsoft 2" /></a>
+            <div class="cert-actions"><a href="m2.jpg" target="_blank">View</a><a href="m2.jpg" download="Microsoft-2.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Microsoft</h3>
+            <a href="m3.jpg" target="_blank"><img class="cert-preview" src="m3.jpg" alt="Microsoft 3" /></a>
+            <div class="cert-actions"><a href="m3.jpg" target="_blank">View</a><a href="m3.jpg" download="Microsoft-3.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Microsoft</h3>
+            <a href="m4.jpg" target="_blank"><img class="cert-preview" src="m4.jpg" alt="Microsoft 4" /></a>
+            <div class="cert-actions"><a href="m4.jpg" target="_blank">View</a><a href="m4.jpg" download="Microsoft-4.jpg" class="download">Save</a></div>
           </article>
 
-          <article class="cert-card hidden-el">
-            <h3>Certificate Title 4</h3>
-            <a href="cert4.jpg" target="_blank"><img class="cert-preview" src="cert4.jpg" alt="Certificate 4" /></a>
-            <div class="cert-actions"><a href="cert4.jpg" target="_blank">View</a><a href="cert4.jpg" download="Certificate-4.jpg" class="download">Save</a></div>
+          <!-- NORTHEASTERN COLLEGE (4) -->
+          <article class="cert-card">
+            <h3>Northeastern College</h3>
+            <a href="nc1.jpg" target="_blank"><img class="cert-preview" src="nc1.jpg" alt="Northeastern 1" /></a>
+            <div class="cert-actions"><a href="nc1.jpg" target="_blank">View</a><a href="nc1.jpg" download="Northeastern-1.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Northeastern College</h3>
+            <a href="nc2.jpg" target="_blank"><img class="cert-preview" src="nc2.jpg" alt="Northeastern 2" /></a>
+            <div class="cert-actions"><a href="nc2.jpg" target="_blank">View</a><a href="nc2.jpg" download="Northeastern-2.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Northeastern College</h3>
+            <a href="nc3.jpg" target="_blank"><img class="cert-preview" src="nc3.jpg" alt="Northeastern 3" /></a>
+            <div class="cert-actions"><a href="nc3.jpg" target="_blank">View</a><a href="nc3.jpg" download="Northeastern-3.jpg" class="download">Save</a></div>
+          </article>
+          <article class="cert-card">
+            <h3>Northeastern College</h3>
+            <a href="nc4.jpg" target="_blank"><img class="cert-preview" src="nc4.jpg" alt="Northeastern 4" /></a>
+            <div class="cert-actions"><a href="nc4.jpg" target="_blank">View</a><a href="nc4.jpg" download="Northeastern-4.jpg" class="download">Save</a></div>
           </article>
 
         </div>
@@ -450,6 +559,21 @@
       canvas.height = window.innerHeight;
       initStars();
     });
+
+    // 3. Horizontal Certificate Slider Logic
+    const track = document.getElementById('cert-track');
+    const btnLeft = document.getElementById('cert-left');
+    const btnRight = document.getElementById('cert-right');
+
+    if (track && btnLeft && btnRight) {
+      const scrollAmount = 350; // Width of card + gap
+      btnLeft.addEventListener('click', () => {
+        track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      });
+      btnRight.addEventListener('click', () => {
+        track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      });
+    }
   </script>
 
 </body>
